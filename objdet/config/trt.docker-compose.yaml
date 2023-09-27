@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  yolov8_trt:
+    container_name: yolov8_trt
+    build:
+      context: .
+      dockerfile: dockerfile
+    ipc: host
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+    volumes:
+      - ../training/2023-09-272/weights:/app/trained-inference-models   # trained model path, which includes a best.pt
+      - ./2023-09-26_trt.yaml:/app/config/hyp.yaml  # customized hyperparameters
+    command: >
+      python3 /repos/LMI_AI_Solutions/object_detectors/yolov8_lmi/cmd.py

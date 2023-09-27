@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  yolov8_val:
+    container_name: yolov8_val
+    build:
+      context: .
+      dockerfile: dockerfile
+    ipc: host
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+    volumes:
+      - ../validation:/app/validation  # validation output path
+      - ../training/2023-09-272/weights:/app/trained-inference-models   # trained model path, where it has best.pt
+      - ../data/resized_yolo/images:/app/data  # input data path
+      - ./2023-09-26_val.yaml:/app/config/hyp.yaml  # customized hyperparameters
+    command: >
+      python3 /repos/LMI_AI_Solutions/object_detectors/yolov8_lmi/cmd.py
