@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  yolov8_train:
+    container_name: yolov8_train
+    build:
+      context: .
+      dockerfile: dockerfile
+    ipc: host
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+    volumes:
+      - ../training:/app/training   # training output
+      - ../data/resized_yolo:/app/data  # training data
+      - ./2023-09-26_dataset.yaml:/app/config/dataset.yaml  # dataset settings
+      - ./2023-09-26_train.yaml:/app/config/hyp.yaml  # customized hyperparameters
+    ports:
+      - 6008:6008
+    command: >
+      python3 /repos/LMI_AI_Solutions/object_detectors/yolov8_lmi/cmd.py

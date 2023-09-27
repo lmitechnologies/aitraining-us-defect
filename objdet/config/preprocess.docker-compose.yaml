@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  yolov8_preprocess:
+    container_name: yolov8_preprocess
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    ipc: host
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+    volumes:
+      - ../data:/app/data # format is location_in_host:location_in_container
+      - ../preprocess/2023-09-26.sh:/app/preprocess/preprocess.sh
+    command: >
+      bash /app/preprocess/preprocess.sh
